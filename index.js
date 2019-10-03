@@ -2,39 +2,37 @@ const ig = require('./instagram');
 
 (async () => {
 
-    await ig.initialize(false);  // аргумент false открывает браузер, true делает все в фоновом режиме
+    await ig.initialize(false);  // argument false opens the browser, true does everything in the background
 
-    await ig.login('_anna_barinova24', 'vaxvaxvax228'); // Ваш логин и пароль для инициализации
+    await ig.login('', ''); // Your login and password to initialize
 
-    //await ig.unsubscribe(); // отписывается от всех людей, которые не подписаны на вас, раскоментировать чтобы запустить 
+    //await ig.unsubscribe(); //Unsubscribes from all people who are not following you, uncomment to run
 
-    await ig.collection('https://www.instagram.com/p/B16lwNYnGl1/', 1000); // Вам нужно указать ссылку поста и бот соберет массив людей лайкнувших его, второй аргумент - длина массива
+    await ig.collection('https://www.instagram.com/p/B16lwNYnGl1/', 1000); // You need to specify the link of the post and the bot will collect an array of people who like it, the second argument is the length of the array
 
-    await ig.likeProcess(900, 0); // первый аргумент, количество лайков, второй количество подписок
+    await ig.likeProcess(900, 0); // first argument, number of likes, second number of subscriptions
 
 })();
 
 /*
 
-Этот бот собирает массив людей лайкнувших любой пост, который вы укажите и заходит к каждому на страницу, ставит лайки или подписыается.
+This bot collects an array of people who like any post that you specify and goes to each page, puts likes or subscribes.
 
-Для начала необходимо пакеты нужно установить Nodejs и npm;
+First you need the packages you need to install Nodejs and npm;
 
-Потом нужно установить все необходимые пакеты.
+Then you need to install all the necessary packages.
 npm i
 
-Дальше нужно установить pm2 для работы в фоновом режиме.
+Next, you need to install pm2 to work in the background.
 npm install pm2 -g
 
-Запуск
-node index.js
+start
 pm2 start index.js
 
-
-Чтобы увидеть логи
+See logs
 pm2 log 0
 
-Обязательно нужно указать эту команду, если хотите прекратить работу. Иначе он будет работать пока вы не выключите компьютер.
+Be sure to specify this command if you want to stop working. Otherwise, it will work until you turn off the computer.
 pm2 stop index.js
 
 */
