@@ -6,11 +6,9 @@ const ig = require('./instagram');
 
     await ig.login('', ''); // Your login and password to initialize
 
-    //await ig.unsubscribe(); //Unsubscribes from all people who are not following you, uncomment to run
+    await ig.collection('https://www.instagram.com/p/B6SvfibhgOn/', 300); // You need to specify the link of the post and the bot will collect an array of people who like it, the second argument is the length of the array
 
-    await ig.collection('https://www.instagram.com/p/B16lwNYnGl1/', 1000); // You need to specify the link of the post and the bot will collect an array of people who like it, the second argument is the length of the array
-
-    await ig.likeProcess(900, 0); // first argument, number of likes, second number of subscriptions
+    await ig.likeProcess(900, 500); // first argument, number of likes, second number of subscriptions
 
 })();
 
