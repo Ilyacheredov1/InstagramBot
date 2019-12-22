@@ -47,22 +47,37 @@ const instagram = {
     //await instagram.page.waitFor('a > span[aria-label="Профиль"]');
   },
 
-  _collectInWindow: async (howMuch, selector) => {
+  _collectInWindow: async (howMuch, selector, linkSelector) => {
 
     let references = [];
 
     for (let i = 0; i < howMuch; i++) {
-      await instagram.page.evaluate(`${selector}.scrollBy(0, -1)`);
-      await instagram.page.evaluate(`${selector}.scrollBy(0, 60)`);
-      await instagram.page.waitFor(10);
+      try {
 
-      let link = await instagram.page.$$("._7UhW9.xLCgt.MMzan.KV-D4.fDxYl a");
-      let hrefValue = await (await link[0].getProperty("href")).jsonValue(); //!!!!!!!!!!
-      references.push(hrefValue);
-      await instagram.page.waitFor(10);
-      console.log(`${i}: ${hrefValue}`);
-      await instagram.page.waitFor(150);
-      //дико зависит от времени, если ставить слишком быстро то не успевает обноваляться
+        await instagram.page.evaluate(`${selector}.scrollBy(0, -1)`);
+        await instagram.page.evaluate(`${selector}.scrollBy(0, 60)`);
+        await instagram.page.waitFor(10);
+
+        let link = await instagram.page.$$(linkSelector);
+
+        let hrefValue;
+
+        if (linkSelector === "._7UhW9.xLCgt.MMzan.KV-D4.fDxYl a") {
+          hrefValue = await (await link[0].getProperty("href")).jsonValue();
+        } else {
+          hrefValue = await (await link[i].getProperty("href")).jsonValue();
+        }
+
+        references.push(hrefValue);
+        await instagram.page.waitFor(10);
+        console.log(`${i}: ${hrefValue}`);
+        await instagram.page.waitFor(150);
+        //дико зависит от времени, если ставить слишком быстро то не успевает обновляться
+
+      } catch (err) {
+        console.log('error = ', err);
+        await instagram.page.waitFor(500);
+      }
     }
 
     return references
@@ -81,6 +96,7 @@ const instagram = {
     ref = await instagram._collectInWindow(
       howMuch,
       `document.querySelectorAll('.Igw0E.IwRSH.eGOV_.vwCYk.i0EQd')[0].querySelector('div')`,
+      `._7UhW9.xLCgt.MMzan.KV-D4.fDxYl a`
     );
 
     console.log(ref.length);
@@ -141,54 +157,21 @@ const instagram = {
 
             //comments
 
-            // if (likes % 18 == 0) {
-            //   let rand = Math.round(Math.random() * 21);
+            // if (likes % 18 === 0) {
+            //   let rand = ~~(Math.random() * 21);
             //   let smile;
 
-            //   if (rand == 1) {
-            //     smile = "😍";
-            //   } else if (rand == 2) {
-            //     smile = "😍😍";
-            //   } else if (rand == 3) {
-            //     smile = "😍😍😍";
-            //   } else if (rand == 4) {
-            //     smile = "😘";
-            //   } else if (rand == 5) {
-            //     smile = "😘😘";
-            //   } else if (rand == 6) {
-            //     smile = "😘😘😘";
-            //   } else if (rand == 7) {
-            //     smile = "😻";
-            //   } else if (rand == 8) {
-            //     smile = "😻😻";
-            //   } else if (rand == 9) {
-            //     smile = "😻😻😻";
-            //   } else if (rand == 10) {
-            //     smile = "❤";
-            //   } else if (rand == 11) {
-            //     smile = "❤❤";
-            //   } else if (rand == 12) {
-            //     smile = "❤❤❤";
-            //   } else if (rand == 13) {
-            //     smile = "😋";
-            //   } else if (rand == 14) {
-            //     smile = "😋😋";
-            //   } else if (rand == 15) {
-            //     smile = "😋😋😋";
-            //   } else if (rand == 16) {
-            //     smile = "💪";
-            //   } else if (rand == 17) {
-            //     smile = "💪💪";
-            //   } else if (rand == 18) {
-            //     smile = "💪💪💪";
-            //   } else if (rand == 19) {
-            //     smile = "🔥";
-            //   } else if (rand == 20) {
-            //     smile = "🔥🔥";
-            //   } else if (rand == 21) {
-            //     smile = "🔥🔥🔥";
-            //   }
+            //   const commentsArray = [
+            //     "😍", "😍😍", "😍😍😍",
+            //     "😘", "😘😘", "😘😘😘",
+            //     "😻", "😻😻", "😻😻😻",
+            //     "❤", "❤❤", "❤❤❤",
+            //     "😋", "😋😋", "😋😋😋",
+            //     "💪", "💪💪", "💪💪💪",
+            //     "🔥", "🔥🔥", "🔥🔥🔥",
+            //   ];
 
+            //   smile = commentsArray[rand];
             //   console.log(smile);
 
             //   await instagram.page.type(
@@ -196,14 +179,8 @@ const instagram = {
             //     smile,
             //     { delay: 100 }
             //   );
-            //   if (
-            //     await instagram.page.$(
-            //       "body > div._2dDPU.vCf6V > div.zZYga > div > article > div.eo2As > section.sH9wk._JgwE > div > form > button"
-            //     )
-            //   ) {
-            //     let submit = await instagram.page.$(
-            //       "body > div._2dDPU.vCf6V > div.zZYga > div > article > div.eo2As > section.sH9wk._JgwE > div > form > button"
-            //     );
+            //   if (await instagram.page.$("body > div._2dDPU.vCf6V > div.zZYga > div > article > div.eo2As > section.sH9wk._JgwE > div > form > button")) {
+            //     let submit = await instagram.page.$("body > div._2dDPU.vCf6V > div.zZYga > div > article > div.eo2As > section.sH9wk._JgwE > div > form > button");
             //     await instagram.page.waitFor(1000);
             //     await submit.click();
             //     await instagram.page.waitFor(3000);
@@ -211,7 +188,7 @@ const instagram = {
             //     console.log(`comments: ${comments}`);
             //   }
             // }
-            //console.log('if work')
+
             if (likes < maxLikes) {
 
               let like = await instagram.page.$('span.glyphsSpriteHeart__outline__24__grey_9.u-__7[aria-label="Like"]');
@@ -268,7 +245,8 @@ const instagram = {
 
     subRef = await instagram._collectInWindow(
       howMuch,
-      `document.querySelector('body > div.RnEpo.Yx5HN > div > div.isgrP')`
+      `document.querySelector('body > div.RnEpo.Yx5HN > div > div.isgrP')`,
+      `.FPmhX.notranslate._0imsa `
     );
 
     console.log(subRef.length);
@@ -288,7 +266,8 @@ const instagram = {
 
     subscriptionsRef = await instagram._collectInWindow(
       mySub,
-      `document.querySelector('body > div.RnEpo.Yx5HN > div > div.isgrP')`
+      `document.querySelector('body > div.RnEpo.Yx5HN > div > div.isgrP')`,
+      `.FPmhX.notranslate._0imsa `
     );
 
     console.log(subscriptionsRef.length);
@@ -363,12 +342,57 @@ const instagram = {
 
         //let link = await instagram.page.$$("._7UhW9.xLCgt.MMzan.KV-D4.fDxYl a");
 
-
       } catch (e) {
         console.log('error = ', e);
       }
     }
-  }
+  },
+
+  simpleUnsubscribeMethod: async (howMuchUnsubs) => {
+
+    let unSubsCount = 0;
+    const pageHref = `https://www.instagram.com/${page}/`;
+
+    await instagram.page.goto(pageHref, { waitUntil: "networkidle2" });
+    await instagram.page.waitFor(7000);
+
+    let mySubscriptions = await instagram.page.$("#react-root > section > main > div > header > section > ul > li:nth-child(3) > a");
+    mySubscriptions.click();
+    await instagram.page.waitFor(3000);
+
+    subscriptionsRef = await instagram._collectInWindow(
+      howMuchUnsubs,
+      `document.querySelector('body > div.RnEpo.Yx5HN > div > div.isgrP')`,
+      `.FPmhX.notranslate._0imsa `
+    );
+
+    await instagram.page.waitFor(3000);
+
+    for (let y = 0; y < subscriptionsRef.length; y++) {
+      try {
+        await instagram.page.goto(subscriptionsRef[y]); //{ waitUntil: 'networkidle2' });
+        let random = Math.round(Math.random() * 10);
+        await instagram.page.waitFor(8000 + random);
+
+        const unSubButton = await instagram.page.$("#react-root > section > main > div > header > section > div.nZSzR > div.Igw0E.IwRSH.eGOV_._4EzTm > span > span.vBF20._1OSdk > button");
+        await unSubButton.click();
+        await instagram.page.waitFor(5000);
+        const unFollowButton = await instagram.page.$("body > div.RnEpo.Yx5HN > div > div > div.mt3GC > button.aOOlW.-Cab_");
+        await unFollowButton.click();
+        await instagram.page.waitFor(2000);
+        unSubsCount++;
+        console.log(`unsubscribe: ${unSubsCount}`);
+
+      } catch (err) {
+        console.log("error = ", err);
+        await instagram.page.waitFor(30000);
+      }
+    }
+  },
+
+
+
 };
+
 
 module.exports = instagram;
