@@ -213,7 +213,7 @@ const instagram = {
     console.log("All over");
   },
 
-  unsubscribe: async () => {
+  unsubscribeCompare: async () => {
     let unSubs = 0;
     let subRef = [];
     let subscriptionsRef = [];
@@ -308,89 +308,53 @@ const instagram = {
     }
   },
 
-  unsubscribeFromAll: async () => {  // доделать
+  unsubscribe: async (countUnsub) => {
 
+    let unsubIndex = 0;
     const pageHref = `https://www.instagram.com/${page}/`;
 
     await instagram.page.goto(pageHref, { waitUntil: "networkidle2" });
     await instagram.page.waitFor(10000);
 
-    let countSubscribers = await instagram.page.$eval(
-      "#react-root > section > main > div > header > section > ul > li:nth-child(3) > a > span",
-      element => element.innerHTML
-    );
-
-    countSubscribers = helpers.parseStringCountSubscribes(countSubscribers);
-
-    const mySubscriptionsButton = await instagram.page.$('main > div > header > section > ul > li:nth-child(3) > a');
+    let mySubscriptionsButton = await instagram.page.$('main > div > header > section > ul > li:nth-child(3) > a');
     await mySubscriptionsButton.click();
     await instagram.page.waitFor(10000);
 
 
-    for (let i = 0; i < countSubscribers; i++) {
+    for (let i = 0; unsubIndex <= countUnsub; i++) {
       try {
-        await instagram.page.evaluate(`document.querySelector('body > div.RnEpo.Yx5HN > div > div.isgrP').scrollBy(0, -1)`);
-        await instagram.page.evaluate(`document.querySelector('body > div.RnEpo.Yx5HN > div > div.isgrP').scrollBy(0, 60)`);
-        await instagram.page.waitFor(10);
 
-        const ButtonUnFollow = await instagram.page.$(`body > div.RnEpo.Yx5HN > div > div.isgrP > div.DPiy6.Igw0E.IwRSH.eGOV_._4EzTm.HVWg4 > div > div > div:nth-child(0) > div.Igw0E.rBNOH.YBx95.ybXk5._4EzTm.soMvl > button`);
-        ButtonUnFollow.click()
+        for (let y = 0; y < 11; y++) {
+          try {
+            const random = ~~(Math.random() * 20000);
+            await instagram.page.waitFor(random);
+            const ButtonUnFollow = await instagram.page.$(`body > div.RnEpo.Yx5HN > div > div.isgrP > ul > div > li:nth-child(${y + 1}) > div > div.Igw0E.rBNOH.YBx95.ybXk5._4EzTm.soMvl > button`);
+            ButtonUnFollow.click()
+            await instagram.page.waitFor(1000);
+            const ButtonUnFollowInWindow = await instagram.page.$(`body > div:nth-child(19) > div > div > div.mt3GC > button.aOOlW.-Cab_`);
+            ButtonUnFollowInWindow.click()
+            await instagram.page.waitFor(1000);
 
-        await instagram.page.waitFor(1000);
+            unsubIndex++;
+            console.log('Unsubscribe ', unsubIndex);
 
-        console.log('');
+          } catch (err) {
+            console.log('error = ', err);
+            await instagram.page.waitFor(10000);
+          }
+        };
 
-        //let link = await instagram.page.$$("._7UhW9.xLCgt.MMzan.KV-D4.fDxYl a");
-
-      } catch (e) {
-        console.log('error = ', e);
-      }
-    }
-  },
-
-  simpleUnsubscribeMethod: async (howMuchUnsubs) => {
-
-    let unSubsCount = 0;
-    const pageHref = `https://www.instagram.com/${page}/`;
-
-    await instagram.page.goto(pageHref, { waitUntil: "networkidle2" });
-    await instagram.page.waitFor(7000);
-
-    let mySubscriptions = await instagram.page.$("#react-root > section > main > div > header > section > ul > li:nth-child(3) > a");
-    mySubscriptions.click();
-    await instagram.page.waitFor(3000);
-
-    subscriptionsRef = await instagram._collectInWindow(
-      howMuchUnsubs,
-      `document.querySelector('body > div.RnEpo.Yx5HN > div > div.isgrP')`,
-      `.FPmhX.notranslate._0imsa `
-    );
-
-    await instagram.page.waitFor(3000);
-
-    for (let y = 0; y < subscriptionsRef.length; y++) {
-      try {
-        await instagram.page.goto(subscriptionsRef[y]); //{ waitUntil: 'networkidle2' });
-        let random = Math.round(Math.random() * 10);
-        await instagram.page.waitFor(8000 + random);
-
-        const unSubButton = await instagram.page.$("#react-root > section > main > div > header > section > div.nZSzR > div.Igw0E.IwRSH.eGOV_._4EzTm > span > span.vBF20._1OSdk > button");
-        await unSubButton.click();
+        await instagram.page.evaluate(`location.reload()`);
         await instagram.page.waitFor(5000);
-        const unFollowButton = await instagram.page.$("body > div.RnEpo.Yx5HN > div > div > div.mt3GC > button.aOOlW.-Cab_");
-        await unFollowButton.click();
-        await instagram.page.waitFor(2000);
-        unSubsCount++;
-        console.log(`unsubscribe: ${unSubsCount}`);
+        let mySubscriptionsButton = await instagram.page.$('main > div > header > section > ul > li:nth-child(3) > a');
+        await mySubscriptionsButton.click();
 
       } catch (err) {
-        console.log("error = ", err);
-        await instagram.page.waitFor(30000);
+        console.log('error = ', err);
+        await instagram.page.waitFor(10000);
       }
     }
-  },
-
-
+  }
 
 };
 

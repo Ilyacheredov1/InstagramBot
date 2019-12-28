@@ -17,10 +17,9 @@ function saveCommonInTwoArrays(arr1, arr2) {
     let result = [];
 
     nextInput: for (var b = 0; b < arr2.length; b++) {
-        var str = arr2[b]; // для каждого элемента
+        var str = arr2[b];
         for (var j = 0; j < arr1.length; j++) {
-            // ищем, был ли он уже?
-            if (arr1[j] == str) continue nextInput; // если да, то следующий
+            if (arr1[j] == str) continue nextInput;
         }
         result.push(str);
     }
@@ -31,7 +30,7 @@ function saveCommonInTwoArrays(arr1, arr2) {
 function parseStringCountSubscribes(str) {
     const strArr = str.split("").filter(it => it !== ',');
     let numberSubs = strArr.join('')
-    console.log(numberSubs);
+    console.log('numberSubs = ', numberSubs);
     return numberSubs;
 }
 

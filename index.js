@@ -6,7 +6,7 @@ const ig = require('./instagram');
 
     await ig.login('', ''); // Your login and password to initialize
 
-    //await ig.simpleUnsubscribeMethod(500); // unsubscribe 
+    // await ig.unsubscribe(200);
 
     await ig.collection('https://www.instagram.com/p/B6SvfibhgOn/', 1300); // You need to specify the link of the post and the bot will collect an array of people who like it, the second argument is the length of the array
 
