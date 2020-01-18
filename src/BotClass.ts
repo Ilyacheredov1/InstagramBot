@@ -1,7 +1,5 @@
 import puppeteer from 'puppeteer'
-import { selectors, commentsArray } from './datas'
-
-const BASE_URL = "https://www.instagram.com/accounts/login/?hl=ru&source=auth_switcher";
+import { selectors, commentsArray, BASE_URL } from './datas'
 
 
 class BotClass {
@@ -30,9 +28,9 @@ class BotClass {
     }
 
 
-    public finish = () => {
+    public finish = async () => {
         console.log('Browser was closed');
-        this.browser.close();
+        await this.browser.close();
     }
 
 
@@ -66,9 +64,7 @@ class BotClass {
     }
 
 
-
     public login = async (username: string, password: string) => {
-
 
         if (!username || !password) {
             console.log('Dont indicated login or password');
@@ -84,13 +80,21 @@ class BotClass {
         await this.typeText(password, selectors.passwordField);
 
         await this.clickButton(selectors.loginButton);
+        await this.page.waitFor(5000);
 
         if (await this.page.$("#react-root > section > div > div > div.ZpgjG._1I5YO > h2")) {
             console.log("not open!");
             await this.page.waitFor(60000);
         }
 
-        await this.page.waitFor(5000);
+        if (await this.page.$(selectors.dontRightLoginOrPassword)) {
+            console.log('wrong login or password');
+            await this.finish();
+        }
+
+        if (await this.page.$(selectors.successLogin)) {
+            console.log('Success login');
+        }
 
     }
 
@@ -229,7 +233,6 @@ class BotClass {
         };
 
         console.log("All over");
-        this.finish();
 
     }
 
@@ -243,12 +246,11 @@ class BotClass {
         await this.clickButton(selectors.subscibersListButton);
         await this.page.waitForNavigation();
 
-
-        for (let i = 0; unsubIndex < countUnsub; i++) {
-
+        const unsubInWindow = async () => {
             for (let y = 0; y < 11; y++) {
                 try {
 
+                    // искусственная задержка
                     const random = ~~(Math.random() * 20000);
                     await this.page.waitFor(random);
                     await this.clickButton(`body > div.RnEpo.Yx5HN > div > div.isgrP > ul > div > li:nth-child(${y + 1}) > div > div.Igw0E.rBNOH.YBx95.ybXk5._4EzTm.soMvl > button`);
@@ -262,6 +264,17 @@ class BotClass {
                     await this.page.waitFor(10000);
                 }
             };
+        };
+
+
+        for (let i = 0; unsubIndex < countUnsub; i++) {
+
+            await unsubInWindow();
+
+            await this.page.evaluate(`location.reload()`);
+            await this.page.waitFor(5000);
+            await this.clickButton('main > div > header > section > ul > li:nth-child(3) > a');
+
         }
 
     }

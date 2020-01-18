@@ -8,13 +8,13 @@ const bot = new BotClass;
 
     await bot.login('', ''); // Your login and password to initialize
 
-    // await bot.unsubscribe(100);
+    // await bot.unsubscribe(30);
 
     await bot.collection('https://www.instagram.com/p/B7bpDjJB16U/', 300); // You need to specify the link of the post and the bot will collect an array of people who like it, the second argument is the length of the array
 
     await bot.likeProcess(200, 0); // first argument, number of likes, second number of subscriptions
 
-    bot.finish();
+    await bot.finish();
 
 })();
 
